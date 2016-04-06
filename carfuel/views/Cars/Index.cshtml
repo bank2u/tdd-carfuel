@@ -1,0 +1,36 @@
+﻿@using CarFuel.Models
+@model IEnumerable<Car>
+
+
+<h2>Cars</h2>
+
+<div class="well well-sm">
+  <a id="gotoAdd" href="~/cars/create"
+     class="btn btn-info btn-sm">
+    <span class="glyphicon glyphicon-plus"></span>
+    Add New Car
+  </a>
+
+  <b>Total: </b>
+  <span id="count">0</span>
+  cars
+</div>
+
+<table class="table">
+  <thead>
+    <tr>
+      <th>Make</th>
+      <th>Model</th>
+      <th>Average Km/L.</th>
+    </tr>
+  </thead>
+  <tbody>
+    @foreach (var car in Model) {
+    <tr>
+      <td>@car.Make</td>
+      <td>@car.Model</td>
+      <td>@car.AverageKmL</td>
+    </tr>
+    }
+  </tbody>
+</table>

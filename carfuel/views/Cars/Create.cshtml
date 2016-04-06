@@ -1,0 +1,22 @@
+﻿@using CarFuel.Models
+@model Car 
+
+@{
+    ViewBag.Title = "Create";
+}
+
+<h2>Add a new car</h2>
+
+@using(Html.BeginForm()) {
+
+
+  @Html.TextBox("Make")
+
+  @Html.TextBox("Model")
+
+  <div>
+    <button id="btnAdd">
+      Add
+    </button>
+  </div>
+}

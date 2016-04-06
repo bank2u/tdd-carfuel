@@ -1,0 +1,8 @@
+﻿@using CarFuel.Models
+@model Car
+
+<h2>@Model.Make (@Model.Model)</h2>
+
+<div class="well well-sm">
+    Average consumption is <strong>@Model.AverageKmL.ToString("n2")</strong> km/L
+</div>

@@ -20,7 +20,7 @@ namespace CarFuel.Facts {
         c.Model = "Accord";
 
         Assert.NotNull(c.FillUps);
-        Assert.Equal(0, c.FillUps.Count);
+        Assert.Equal(5, c.FillUps.Count);
       }
 
     }

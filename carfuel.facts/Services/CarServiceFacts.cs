@@ -9,15 +9,18 @@ using CarFuel.Services;
 using Xunit;
 using System.Web.Mvc;
 using Xunit.Abstractions;
+using Moq;
 
 namespace CarFuel.Facts.Services
 {
     public class SharedService
     {
         public CarService CarService { get; set; }
+        public FakeCarDb Db { get; set; }
         public SharedService()
         {
-            CarService = new CarService(new FakeCarDb());
+            Db = new FakeCarDb();
+            CarService = new CarService(Db);
         }
     }
 
@@ -33,12 +36,14 @@ namespace CarFuel.Facts.Services
         public class AddCarMethod
         {
             private CarService s;
+            private FakeCarDb db;
             private ITestOutputHelper ouput;
 
 
             public AddCarMethod(ITestOutputHelper output, SharedService service)
             {
                 s = service.CarService;
+                db = service.Db;
                 this.ouput = output;
 
                 output.WriteLine("ctor");
@@ -47,21 +52,28 @@ namespace CarFuel.Facts.Services
             [Fact]
             public void AddSingleCar()
             {
+                var mock = new Mock<ICarDb>();
+                mock.Setup(db => db.Add(It.IsAny<Car>())).Returns((Car car) => car);
+                var service = new CarService(mock.Object);
+
                 var c = new Car();
                 c.Make = "Honda";
                 c.Model = "Civic";
                 var userId = Guid.NewGuid();
 
-                var c2 = s.AddCar(c, userId);
+                db.AddMethodHasCalled = false;
+                var c2 = service.AddCar(c, userId);
 
                 Assert.NotNull(c2);
                 Assert.Equal(c2.Make, c.Make);
                 Assert.Equal(c2.Model, c.Model);
+                mock.Verify(db => db.Add(It.IsAny<Car>()), Times.Once);
+                //Assert.True(db.AddMethodHasCalled);
 
-                var cars = s.GetCarsByMember(userId);
+                //var cars = s.GetCarsByMember(userId);
 
-                Assert.Equal(1, cars.Count());
-                Assert.Contains(cars, x => x.OwnerId == userId);
+                //Assert.Equal(1, cars.Count());
+                //Assert.Contains(cars, x => x.OwnerId == userId);
             }
         }
 
@@ -123,6 +135,7 @@ namespace CarFuel.Facts.Services
             public void MemberCanAddNotMoreThanTwoCar()
             {
                 var member1_Id = Guid.NewGuid();
+
 
                 Assert.True(s.CanAddMoreCars(member1_Id));
 

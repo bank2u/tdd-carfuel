@@ -7,19 +7,17 @@ using CarFuel.DataAccess;
 using CarFuel.Models;
 using CarFuel.Services;
 using Microsoft.AspNet.Identity;
+using System.Net;
 
 namespace CarFuel.Controllers
 {
     public class CarsController : Controller
     {
+        private readonly ICarService carService;
 
-        private ICarDb db;
-        private CarService carService;
-
-        public CarsController()
+        public CarsController(ICarService carService)
         {
-            db = new CarDb();
-            carService = new CarService(db);
+            this.carService = carService;
         }
 
         [Authorize]
@@ -47,6 +45,11 @@ namespace CarFuel.Controllers
 
         public ActionResult Details(Guid id)
         {
+            if (id == null)
+            {
+                return new HttpStatusCodeResult(HttpStatusCode.BadRequest);
+            }
+
             var userId = new Guid(User.Identity.GetUserId());
             var c = carService.GetCarsByMember(userId).SingleOrDefault(x => x.Id == id);
 
